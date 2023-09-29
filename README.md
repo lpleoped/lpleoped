@@ -1,8 +1,4 @@
 ### Hi there 👋
-
-<!--
-**lpleoped/lpleoped** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
 Here are some ideas to get you started:
 
 - 🔭 I’m currently working on Automation.
@@ -11,5 +7,10 @@ Here are some ideas to get you started:
 - 🤔 I’m looking for help with Typescript.
 - 💬 Ask me about me.
 - 📫 How to reach me: https://www.linkedin.com/in/leonardo-pedreira-270a79119/ 
-- ⚡ Fun fact: Team Cats   
+- ⚡ Fun fact: Team Cats 
+
+<!--
+**lpleoped/lpleoped** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+
+  
 -->
