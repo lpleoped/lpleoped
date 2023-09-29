@@ -37,59 +37,43 @@ describe('Order - Golden Arrow Flow E2E- Reto01', () => {
         cy.xpath("//body/div[4]/main[1]/div[2]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/a[1]").click({ force: true });
 
     });
+    
+    
+    const PRODUCT_URL_1 = 'https://www.tiendamia.com.do/product/amz/B07QHXWZ2M';
+    const PRODUCT_URL_2 = 'https://www.tiendamia.com.do/product/amz/B097CNMZF5';
+    const CHECKOUT_BUTTON_SELECTOR = '#product-checkout-button';
+    const CART_PRICE_SELECTOR = '.cart-price > .price';
+    const CART_ITEM_SELECTOR = 'tbody.cart.item';
+    
+    const addProductToCart = (productURL) => {
+        cy.visit(productURL);
+        cy.get(CHECKOUT_BUTTON_SELECTOR).should('be.visible').click();
+    };
+    
     it.only('Order - Golden Arrow Flow E2E - PDP + CART + CHECKOUT - Éxito', () => {
-        var precioTotalCalculado = 0;
-        var precioTotal = 0;
-        cy.visit('https://www.tiendamia.com.do/product/amz/B07QHXWZ2M');
-        cy.wait(tiempo);
-        // Mando el producto al CART y accedo al cart
-        cy.get('#product-checkout-button').should('be.visible').click();
-        cy.wait(1000)
-        cy.visit('https://www.tiendamia.com.do/product/amz/B097CNMZF5');
-        cy.wait(tiempo);
-        // Mando el producto al CART y accedo al cart
-        cy.get('#product-checkout-button').should('be.visible').click();
-        cy.wait(1000)
-        //Tomo el subtotal del cart
-        var precioTotalElemento = cy.get('.sub > .amount > .price');
-        // Convierto en número el precio total del submmary y me lo llevo con el then para poder usarlo luego
-        precioTotalElemento.invoke('text').then((texto) => {
-            texto = texto.slice(3);
-            precioTotal = parseFloat(texto);
+        let precioTotalCalculado = 0;
+        let precioTotal = 0;
+    
+        addProductToCart(PRODUCT_URL_1);
+        addProductToCart(PRODUCT_URL_2);
+    
+        cy.get('.sub > .amount > .price').invoke('text').then((texto) => {
+            precioTotal = parseFloat(texto.slice(3).replace(',', '.'));
             cy.log("Precio Subtotal hasta el momento:" + precioTotal);
         }).then(() => {
-            // En esta variable ya tengo el valor del precio total del submarry
-            cy.log(precioTotal);
-            //Itero por cada elemento del CART
-            cy.get('tbody.cart.item').each(($celda, i) => {
-                cy.log("Iteración: " + i);
-                cy.log("Estamos en celda: " + $celda);
-                cy.get('.cart-price > .price').should('be.visible');
-                //Busco el elemento de precio
-                const precioCelda = $celda.find('.cart-price > .price');
-                // Obtener el contenido de la celda de precio
-                const precioText = precioCelda.text().slice(3).replace(',', '.');
-                var precio = parseFloat(precioText);
-                cy.log("Precio Item: " + precio);
-                cy.wait(10000)
+            cy.get(CART_ITEM_SELECTOR).each(($celda) => {
+                const precioCeldaText = $celda.find(CART_PRICE_SELECTOR).text();
+                const precio = parseFloat(precioCeldaText.slice(3).replace(',', '.'));
                 const cantItemCelda = $celda.find('.col > .field > .control input');
-                cy.log("Cantidad de productos: " + cantItemCelda);
-
-                cy.get(cantItemCelda).invoke('val').then((valorOtroElemento) => {
-                    // Realizar la multiplicación entre precio y el valor del otro elemento
-                    // cy.log("Esto debería ser un 1: " + valorOtroElemento);
-                    const resultadoMultiplicacion = precio * parseFloat(valorOtroElemento);
-                    // cy.log("Resultado de la multiplicación: " + resultadoMultiplicacion);
-                    // cy.log("El precio total calculado es: " + precioTotalCalculado);
-                    precioTotalCalculado = precioTotalCalculado + resultadoMultiplicacion;
-                    cy.log("Precio total calculado hasta ahora: " + precioTotalCalculado);
-                })
+    
+                cy.wrap(cantItemCelda).invoke('val').then((valorOtroElemento) => {
+                    precioTotalCalculado += precio * parseFloat(valorOtroElemento);
+                });
             }).then(() => {
-                cy.log(precioTotalCalculado);
-                cy.wrap(precioTotal).should('eq', precioTotalCalculado);
-            })
-
-        })
+                cy.log("Precio total calculado: " + precioTotalCalculado);
+                expect(precioTotal).to.eq(precioTotalCalculado);
+            });
+        });
     });
 
 });
