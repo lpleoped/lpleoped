@@ -50,7 +50,7 @@ describe('Order - Golden Arrow Flow E2E- Reto01', () => {
         cy.get(CHECKOUT_BUTTON_SELECTOR).should('be.visible').click();
     };
     
-    it.only('Order - Golden Arrow Flow E2E - PDP + CART + CHECKOUT - Éxito', () => {
+    it.only('Order - Golden Arrow Flow E2E - PDP + CART + CHECKOUT - Éxito', (PRODUCT_URL_1, PRODUCT_URL_2,CART_PRICE_SELECTOR, CART_PRICE_SELECTOR) => {
         let precioTotalCalculado = 0;
         let precioTotal = 0;
     
